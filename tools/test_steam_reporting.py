@@ -13,6 +13,7 @@ struct Client {bool active=false,spawned=false,connected=false,fakeclient=false;
 struct {int maxclients=0;Client clients[32];} g_psvs;
 struct {const char *name="de_dust2";} g_psv;
 struct {float value=-1;} sv_visiblemaxplayers;
+enum {ca_dedicated=1};struct {int state=ca_dedicated;} g_pcls;
 float query=0;bool registered=false;
 float Cvar_VariableValue(const char *name){assert(!strcmp(name,"bot_enable_query_hook"));return registered?query:0;}
 const char *Cvar_VariableString(const char*){return "fixture";}
@@ -31,7 +32,8 @@ int main(){
  g_psvs.clients[3].fakeclient=true; // disconnected bot must not count
  server.SendUpdatedServerDetails();assert(steam.bots==2 && steam.max==5);
  registered=true;query=1;server.SendUpdatedServerDetails();assert(steam.bots==0 && steam.max==5);
- query=0;server.SendUpdatedServerDetails();assert(steam.bots==2);
+ g_pcls.state=0;server.SendUpdatedServerDetails();assert(steam.bots==2);
+ g_pcls.state=ca_dedicated;query=0;server.SendUpdatedServerDetails();assert(steam.bots==2);
  query=-1;server.SendUpdatedServerDetails();assert(steam.bots==2);
  query=1;registered=false;server.SendUpdatedServerDetails();assert(steam.bots==2);
  registered=true;query=1;g_psvs.maxclients=0;server.SendUpdatedServerDetails();assert(steam.bots==0);

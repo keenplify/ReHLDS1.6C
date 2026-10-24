@@ -539,7 +539,7 @@ void CSteam3Server::SendUpdatedServerDetails()
 	CRehldsPlatformHolder::get()->SteamGameServer()->SetMaxPlayerCount(maxPlayers);
 	// Match the optional native-bot A2S query hook. Read the game DLL cvar each
 	// update so disabling/unloading the hook restores ordinary Steam reporting.
-	const int reportedBots = Cvar_VariableValue("bot_enable_query_hook") > 0.0f ? 0 : botCount;
+	const int reportedBots = g_pcls.state == ca_dedicated && Cvar_VariableValue("bot_enable_query_hook") > 0.0f ? 0 : botCount;
 	CRehldsPlatformHolder::get()->SteamGameServer()->SetBotPlayerCount(reportedBots);
 	CRehldsPlatformHolder::get()->SteamGameServer()->SetServerName(Cvar_VariableString("hostname"));
 	CRehldsPlatformHolder::get()->SteamGameServer()->SetMapName(g_psv.name);
