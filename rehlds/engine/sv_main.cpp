@@ -4836,12 +4836,16 @@ void EXT_FUNC SV_EmitPings_internal(client_t *client, sizebuf_t *msg)
 	int ping;
 	int packet_loss;
 
+	// The game DLL owns numeric bot latency when enabled. Its periodic ping
+	// packets must not race engine zero-ping entries while the scoreboard is open.
+	const bool gameDllBotLatency = Cvar_VariableValue("bot_show_latency") > 0.0f;
+
 	MSG_WriteByte(msg, svc_pings);
 	MSG_StartBitWriting(msg);
 	for (int i = 0; i < g_psvs.maxclients; i++)
 	{
 		client_t *cl = &g_psvs.clients[i];
-		if (!cl->active)
+		if (!cl->active || (cl->fakeclient && gameDllBotLatency))
 			continue;
 
 		SV_GetNetInfo(cl, &ping, &packet_loss);

@@ -19,3 +19,11 @@ dedicated ReHLDS server, keeping its existing compatible Steam library. Never
 replace Steam client game engine libraries with this dedicated-server engine.
 
 Run `python3 tools/test_steam_reporting.py` for the real-method forwarding test.
+
+When the game DLL enables `bot_show_latency`, the engine omits fake clients from
+its ordinary scoreboard ping packets. The native bot DLL already sends their
+display latency periodically; overwriting those values with engine zeroes caused
+visible flickering while the standard scoreboard was open. Human ping/loss and
+the normal bot entries when the feature is disabled retain their existing behavior.
+Run `python3 tools/test_scoreboard_pings.py` to check the actual emitter with a
+recording packet writer, including repeated updates and disabled-mode fallback.
